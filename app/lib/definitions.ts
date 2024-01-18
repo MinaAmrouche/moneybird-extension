@@ -27,3 +27,14 @@ export type Row = {
   contact: string;
   amount: string;
 };
+
+export type Contact = {
+  id: string;
+  customer_id: string;
+  company_name: string;
+};
+
+export type Product = {
+  id: string;
+  rate: number;
+};
