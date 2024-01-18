@@ -1,8 +1,8 @@
-import { unstable_noStore as noStore } from 'next/cache';
+import { unstable_noStore as noStore } from "next/cache";
 
 export const fetchTimeEntries = async (
-  period: string = "this_year",
-  state: string = "open"
+  state: string = "open",
+  period: string = "this_year"
 ) => {
   noStore();
 
