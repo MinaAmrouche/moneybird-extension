@@ -38,7 +38,7 @@ export default async function TimeEntriesTable({
         PRODUCTS[PROJECT_PRODUCT_MAP[project.id]];
       let amount = 0;
       if (billable && product) {
-        amount = time * (product.rate / 3600);
+        amount = time * (product.price / 3600);
       }
 
       totalTime += time;

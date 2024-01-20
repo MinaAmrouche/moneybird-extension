@@ -8,13 +8,8 @@ export type TimeEntry = {
   detail: {
     created_at: string;
   };
-  contact: {
-    company_name: string;
-  };
-  project: {
-    id: string;
-    name: string;
-  };
+  contact: Contact;
+  project: Project;
 };
 
 export type Row = {
@@ -36,5 +31,19 @@ export type Contact = {
 
 export type Product = {
   id: string;
-  rate: number;
+  price: number;
+  title: string;
+  currency?: string;
+  description?: string;
 };
+
+export type Project = {
+  id: string;
+  name: string;
+  state: "active" | "archived";
+};
+
+export interface IProjectProductMap {
+  projectId: string;
+  productId: string;
+}

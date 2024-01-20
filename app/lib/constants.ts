@@ -8,11 +8,13 @@ const PRODUCT_2: string = process.env.PRODUCT_2 || "";
 export const PRODUCTS: Record<string, Product> = {
   [PRODUCT_1]: {
     id: PRODUCT_1,
-    rate: 65,
+    price: 65,
+    title: "Product 1",
   },
   [PRODUCT_2]: {
     id: PRODUCT_2,
-    rate: 75,
+    price: 75,
+    title: "Product 2",
   },
 };
 
