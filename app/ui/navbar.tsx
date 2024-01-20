@@ -22,6 +22,14 @@ export default function Navbar() {
                 Create invoice
               </Link>
             </li>
+            <li className="block p-1 font-sans text-sm antialiased font-medium leading-normal text-gray-900">
+              <Link
+                href="/projects"
+                className="flex items-center transition-colors hover:text-blue-500"
+              >
+                Project to Product
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
