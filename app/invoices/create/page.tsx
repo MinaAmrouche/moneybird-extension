@@ -1,15 +1,15 @@
 import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/lib/constants";
-import { fetchContacts } from "@/app/lib/contacts";
+import { fetchAllContacts } from "@/app/lib/api/contacts";
 import { Contact, TimeEntry } from "@/app/lib/definitions";
-import { createInvoice } from "@/app/lib/invoices";
-import { fetchTimeEntries } from "@/app/lib/timeEntries";
+import { createInvoice } from "@/app/lib/api/invoices";
+import { fetchTimeEntries } from "@/app/lib/api/timeEntries";
 import { formatTime } from "@/app/lib/utils";
 import CreateInvoiceForm from "@/app/ui/invoices/createInvoiceForm";
 import moment from "moment";
 import { revalidatePath } from "next/cache";
 
 export default async function CreateInvoicePage() {
-  const contacts: Contact[] = await fetchContacts();
+  const contacts: Contact[] = await fetchAllContacts();
   const timeEntries: TimeEntry[] = await fetchTimeEntries("open", "this_year");
 
   const onCreateInvoice = async (contact: string, timeEntries: TimeEntry[]) => {
