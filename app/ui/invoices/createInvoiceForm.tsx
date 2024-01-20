@@ -6,6 +6,7 @@ import Checkbox from "@/app/ui/checkbox";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import moment from "moment";
+import Alert from "@/app/ui/alert";
 
 export default function CreateInvoiceForm({
   contacts,
@@ -58,26 +59,28 @@ export default function CreateInvoiceForm({
   return (
     <form onSubmit={onFormSubmit}>
       {status === "SUCCESS" && (
-        <div className="relative block w-full p-4 mb-4 text-base leading-5 text-white bg-green-500 rounded-lg opacity-100 font-regular">
-          <p>Your invoice was successfully created!</p>
-          <a
-            href={`https://moneybird.com/${process.env.ADMINISTRATION_ID}/sales_invoices/${invoiceId}`}
-            target="_blank"
-          >
-            Go to my invoice
-          </a>
-        </div>
+        <Alert type="success">
+          <>
+            <p>Your invoice was successfully created!</p>
+            <a
+              href={`https://moneybird.com/${process.env.ADMINISTRATION_ID}/sales_invoices/${invoiceId}`}
+              target="_blank"
+            >
+              Go to my invoice
+            </a>
+          </>
+        </Alert>
       )}
       {status === "ERROR" && (
-        <div className="relative block w-full p-4 mb-4 text-base leading-5 text-white bg-red-500 rounded-lg opacity-100 font-regular">
+        <Alert type="error">
           <p>
             Something went wrong during the creation of your invoice. Please try
             again later.
           </p>
-        </div>
+        </Alert>
       )}
       <div className="flex flex-col gap-6 mb-1">
-        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900">
+        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-gray-900">
           Choose a contact
         </h6>
         <div className="relative h-11 w-full min-w-[200px]">
@@ -90,7 +93,7 @@ export default function CreateInvoiceForm({
             name="contact"
           />
         </div>
-        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900">
+        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-gray-900">
           Select time entries
         </h6>
         <div className="flex flex-col">
