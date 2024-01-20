@@ -1,7 +1,7 @@
 "use server";
 
-import Table from "./ui/table";
-import Filters from "./ui/filters";
+import Table from "@/app/ui/table";
+import Filters from "@/app/ui/filters";
 
 export default async function Home({
   searchParams,

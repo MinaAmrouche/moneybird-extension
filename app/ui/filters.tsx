@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import Select from "./select";
+import Select from "@/app/ui/select";
 import Link from "next/link";
 
 const STATES = [
