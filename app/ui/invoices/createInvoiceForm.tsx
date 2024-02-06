@@ -12,10 +12,12 @@ export default function CreateInvoiceForm({
   contacts,
   timeEntries,
   onSubmit,
+  administrationId,
 }: {
   contacts: Contact[];
   timeEntries: TimeEntry[];
   onSubmit: Function;
+  administrationId: string | undefined;
 }) {
   const [entries, setEntries] = useState(
     Object.fromEntries(timeEntries.map(({ id }) => [id, false]))
@@ -63,7 +65,7 @@ export default function CreateInvoiceForm({
           <>
             <p>Your invoice was successfully created!</p>
             <a
-              href={`https://moneybird.com/${process.env.ADMINISTRATION_ID}/sales_invoices/${invoiceId}`}
+              href={`https://moneybird.com/${administrationId}/sales_invoices/${invoiceId}`}
               target="_blank"
             >
               Go to my invoice
