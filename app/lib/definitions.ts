@@ -43,6 +43,12 @@ export type Project = {
   state: "active" | "archived";
 };
 
+export type User = {
+  id: string;
+  email?: string;
+  administrationId?: string;
+};
+
 export interface IProjectProductMap {
   projectId: string;
   productId: string;
