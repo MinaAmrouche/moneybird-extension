@@ -1,7 +1,6 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { db } from "@/app/lib/db";
-import { JWT } from "next-auth/jwt";
+import { db } from "@/app/_lib/db";
 import { AdapterUser } from "next-auth/adapters";
 
 export const authOptions: NextAuthOptions = {
@@ -62,21 +61,38 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account && account.access_token) {
-        token.accessToken = account.access_token;
+    async jwt({ token, user, account }) {
+      if (account?.access_token) {
+        token.accessToken = account.access_token ?? "";
       }
-      if (profile) {
+
+      if (token.email) {
+        const dbUser = await db.user.findFirst({
+          where: {
+            email: token.email,
+          },
+        });
+
+        if (!dbUser) {
+          if (user) {
+            token.user.id = user?.id;
+          }
+          return token;
+        }
+
         token.user = {
-          email: profile.email,
-          id: profile.id,
-          administrationId: profile.administration_id,
+          id: dbUser.id,
+          email: dbUser.email,
+          administrationId: dbUser.administrationId,
         };
       }
+
       return token;
     },
     async session({ session, token }) {
-      session.user = token.user as AdapterUser & JWT;
+      if (token) {
+        session.user = token.user;
+      }
       session.accessToken = token.accessToken;
 
       return session;
