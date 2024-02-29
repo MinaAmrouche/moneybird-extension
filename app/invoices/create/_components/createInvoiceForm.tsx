@@ -1,12 +1,12 @@
 "use client";
 
-import { Contact, TimeEntry } from "@/app/lib/definitions";
-import Select from "@/app/ui/select";
-import Checkbox from "@/app/ui/checkbox";
+import { Contact, TimeEntry } from "@/app/_lib/definitions";
+import Select from "@/app/_components/select";
+import Checkbox from "@/app/_components/checkbox";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import moment from "moment";
-import Alert from "@/app/ui/alert";
+import Alert from "@/app/_components/alert";
 
 export default function CreateInvoiceForm({
   contacts,

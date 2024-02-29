@@ -1,7 +1,7 @@
-import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/lib/constants";
+import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
 import { fetchTimeEntries } from "@/app/lib/api/timeEntries";
-import { Row, TimeEntry } from "@/app/lib/definitions";
-import { formatTime } from "@/app/lib/utils";
+import { Row, TimeEntry } from "@/app/_lib/definitions";
+import { formatTime } from "@/app/_lib/utils";
 import moment from "moment/moment";
 import clsx from "clsx";
 

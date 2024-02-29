@@ -1,4 +1,4 @@
-import { Product } from "@/app/lib/definitions";
+import { Product } from "@/app/_lib/definitions";
 
 const PROJECT_1: string = process.env.PROJECT_1 || "";
 const PROJECT_2: string = process.env.PROJECT_2 || "";

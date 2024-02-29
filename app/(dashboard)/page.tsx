@@ -1,7 +1,7 @@
 "use server";
 
-import Table from "@/app/ui/table";
-import Filters from "@/app/ui/filters";
+import Table from "@/app/(dashboard)/_components/table";
+import Filters from "@/app/(dashboard)/_components/filters";
 
 export default async function Home({
   searchParams,

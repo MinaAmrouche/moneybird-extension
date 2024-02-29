@@ -1,9 +1,9 @@
 "use server";
 
 import Link from "next/link";
-import LoginBtn from "./login-btn";
-import { getSession } from "@/app/lib/session";
-import { User } from "../lib/definitions";
+import LoginBtn from "@/app/_components/login-btn";
+import { getSession } from "@/app/_lib/session";
+import { User } from "@/app/_lib/definitions";
 
 export default async function Navbar() {
   const session = await getSession();

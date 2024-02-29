@@ -1,6 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { getSession } from "@/app/lib/session";
-import { User } from "@/app/lib/definitions";
+import { getSession } from "@/app/_lib/session";
+import { User } from "@/app/_lib/definitions";
 
 export const fetchApiData = async (
   url: String,

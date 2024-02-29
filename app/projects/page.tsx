@@ -1,7 +1,7 @@
-import { fetchProducts } from "@/app/lib/api/products";
-import { fetchProjects } from "@/app/lib/api/projects";
-import { Product, Project } from "@/app/lib/definitions";
-import ProjectsToProductForm from "@/app/ui/projects/projectsToProductsForm";
+import { fetchProducts } from "@/app/_lib/api/products";
+import { fetchProjects } from "@/app/_lib/api/projects";
+import { Product, Project } from "@/app/_lib/definitions";
+import ProjectsToProductForm from "@/app/projects/_components/projectsToProductsForm";
 import { revalidatePath } from "next/cache";
 
 export default async function ProjectToProductPage() {

@@ -1,11 +1,11 @@
 "use client";
 
-import { IProjectProductMap, Product, Project } from "@/app/lib/definitions";
+import { IProjectProductMap, Product, Project } from "@/app/_lib/definitions";
 import { FormEvent, useMemo, useState } from "react";
-import Select from "@/app/ui/select";
-import { db } from "@/app/lib/database/database.model";
+import Select from "@/app/_components/select";
+import { db } from "@/app/_lib/database/database.model";
 import { useLiveQuery } from "dexie-react-hooks";
-import Alert from "@/app/ui/alert";
+import Alert from "@/app/_components/alert";
 
 export default function ProjectsToProductForm({
   projects,

@@ -1,4 +1,4 @@
-import { fetchApiData } from "./data";
+import { fetchApiData } from "@/app/_lib/api/data";
 
 export const fetchTimeEntries = async (
   state: string = "open",

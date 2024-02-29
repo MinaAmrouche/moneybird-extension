@@ -1,4 +1,4 @@
-import { fetchApiData } from "@/app/lib/api/data";
+import { fetchApiData } from "@/app/_lib/api/data";
 
 export const fetchInvoice = async (id: string) => {
   try {
