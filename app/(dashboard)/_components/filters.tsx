@@ -3,6 +3,12 @@
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Select from "@/app/_components/select";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+
+export type FormValues = {
+  state: string;
+  period: string;
+};
 
 const STATES = [
   { value: "all", label: "All" },
@@ -26,8 +32,15 @@ export default function Filters() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const form = useForm<FormValues>({
+    defaultValues: {
+      state: searchParams.get("state")?.toString() ?? "all",
+      period: searchParams.get("period")?.toString() ?? "this_month",
+    },
+  });
 
-  const handleFilterChange = (name: string, value: string) => {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     const params = new URLSearchParams(searchParams);
 
     if (value) {
@@ -42,18 +55,18 @@ export default function Filters() {
     <div className="flex justify-between align-center">
       <div className="flex gap-4">
         <Select
-          defaultValue={searchParams.get("state")?.toString()}
           options={STATES}
-          handleChange={handleFilterChange}
           label="State"
           name="state"
+          register={form.register}
+          handleChange={handleFilterChange}
         />
         <Select
-          defaultValue={searchParams.get("period")?.toString()}
           options={PERIODS}
-          handleChange={handleFilterChange}
           label="Period"
           name="period"
+          register={form.register}
+          handleChange={handleFilterChange}
         />
       </div>
       <Link

@@ -1,19 +1,14 @@
 import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
-import { fetchTimeEntries } from "@/app/lib/api/timeEntries";
 import { Row, TimeEntry } from "@/app/_lib/definitions";
 import { formatTime } from "@/app/_lib/utils";
 import moment from "moment/moment";
 import clsx from "clsx";
 
-export default async function TimeEntriesTable({
-  state,
-  period,
+export default function TimeEntriesTable({
+  timeEntries,
 }: {
-  state: string;
-  period: string;
+  timeEntries: TimeEntry[];
 }) {
-  const timeEntries: TimeEntry[] = await fetchTimeEntries(state, period);
-
   let totalTime = 0;
   let totalAmount = 0;
 

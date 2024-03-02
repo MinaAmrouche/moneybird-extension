@@ -1,51 +1,20 @@
-import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
-import { fetchAllContacts } from "@/app/_lib/api/contacts";
 import { Contact, TimeEntry, User } from "@/app/_lib/definitions";
-import { createInvoice } from "@/app/_lib/api/invoices";
-import { fetchTimeEntries } from "@/app/_lib/api/timeEntries";
-import { formatTime } from "@/app/_lib/utils";
-import CreateInvoiceForm from "@/app/invoices/create/_components/createInvoiceForm";
-import moment from "moment";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/app/_lib/session";
+import CreateInvoiceForm from "@/app/invoices/create/_components/createInvoiceForm";
+import { fetchData } from "@/app/_lib/api";
 
 export default async function CreateInvoicePage() {
-  const contacts: Contact[] = await fetchAllContacts();
-  const timeEntries: TimeEntry[] = await fetchTimeEntries("open", "this_year");
-  const session = await getSession();
+  const contacts: Contact[] = await fetchData("contacts");
+  const timeEntries: TimeEntry[] = await fetchData(
+    `time_entries?filter=${encodeURIComponent("state:open")}`
+    );
+    const session = await getSession();
 
-  const onCreateInvoice = async (contact: string, timeEntries: TimeEntry[]) => {
+  const onCreateInvoice = async () => {
     "use server";
-    try {
-      const data = {
-        sales_invoice: {
-          contact_id: contact,
-          details_attributes: Object.keys(PRODUCTS).map((id) => {
-            let totalTime = 0;
-            const entries = timeEntries
-              .filter(({ project }) => PROJECT_PRODUCT_MAP[project.id] === id)
-              .map(({ id, ended_at, started_at, paused_duration }) => {
-                const time =
-                  moment(ended_at).diff(moment(started_at), "seconds", true) -
-                  paused_duration;
-                totalTime += time;
-                return id;
-              });
-            return {
-              product_id: id,
-              time_entry_ids: entries,
-              amount: formatTime(totalTime),
-            };
-          }),
-        },
-      };
 
-      const invoice = await createInvoice(data);
-      revalidatePath("/invoices/create");
-      return invoice;
-    } catch (e) {
-      console.error(e);
-    }
+    revalidatePath("/invoices/create");
   };
 
   return (

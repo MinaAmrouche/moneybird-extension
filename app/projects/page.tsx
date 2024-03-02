@@ -1,12 +1,11 @@
-import { fetchProducts } from "@/app/_lib/api/products";
-import { fetchProjects } from "@/app/_lib/api/projects";
+import { revalidatePath } from "next/cache";
 import { Product, Project } from "@/app/_lib/definitions";
 import ProjectsToProductForm from "@/app/projects/_components/projectsToProductsForm";
-import { revalidatePath } from "next/cache";
+import { fetchData } from "@/app/_lib/api";
 
 export default async function ProjectToProductPage() {
-  const projects: Project[] = await fetchProjects();
-  const products: Product[] = await fetchProducts();
+  const projects: Project[] = await fetchData("projects");
+  const products: Product[] = await fetchData("products");
 
   const onSubmit = async () => {
     "use server";

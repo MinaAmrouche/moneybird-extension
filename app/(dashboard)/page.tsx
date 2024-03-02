@@ -1,7 +1,7 @@
-"use server";
-
 import Table from "@/app/(dashboard)/_components/table";
 import Filters from "@/app/(dashboard)/_components/filters";
+import { TimeEntry } from "@/app/_lib/definitions";
+import { fetchData } from "@/app/_lib/api";
 
 export default async function Home({
   searchParams,
@@ -12,7 +12,13 @@ export default async function Home({
   };
 }) {
   const state = searchParams?.state || "all";
-  const period = searchParams?.period || "this_year";
+  const period = searchParams?.period || "this_month";
+
+  const timeEntries: TimeEntry[] = await fetchData(
+    `time_entries?filter=${encodeURIComponent(
+      `state:${state},period:${period}`
+    )}`
+  );
 
   return (
     <main className="flex min-h-screen flex-col p-10 antialiased">
@@ -25,7 +31,7 @@ export default async function Home({
         </p>
       </div>
       <Filters />
-      <Table state={state} period={period} />
+      <Table timeEntries={timeEntries} />
     </main>
   );
 }

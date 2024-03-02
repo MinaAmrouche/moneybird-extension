@@ -1,26 +1,24 @@
-import { ChangeEvent } from "react";
+import { Path, UseFormRegister, FieldValues } from "react-hook-form";
 
-export default function Select({
-  defaultCheck,
-  checked,
-  handleChange,
+type CheckboxProps<TFieldValues extends FieldValues> = {
+  label: string;
+  name: Path<TFieldValues>;
+  id: string;
+  register: UseFormRegister<TFieldValues>;
+  required?: boolean;
+  handleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export default function Checkbox<
+  TFieldValues extends FieldValues = FieldValues
+>({
   label,
   name,
   id,
-}: {
-  defaultCheck?: boolean;
-  checked?: boolean;
-  handleChange?: Function;
-  label: string;
-  name: string;
-  id: string;
-}) {
-  const onChange = (e: ChangeEvent) => {
-    if (handleChange) {
-      handleChange(id, (e.target as HTMLInputElement).checked);
-    }
-  };
-
+  register,
+  required = false,
+  handleChange,
+}: CheckboxProps<TFieldValues>) {
   return (
     <div className="inline-flex items-center">
       <label
@@ -31,9 +29,7 @@ export default function Select({
           type="checkbox"
           className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
           id={id}
-          name={name}
-          checked={checked ?? defaultCheck}
-          onChange={onChange}
+          {...register(name, { required, onChange: handleChange })}
         />
         <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
           <svg

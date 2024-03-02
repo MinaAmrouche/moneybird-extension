@@ -1,65 +1,135 @@
 "use client";
 
-import { Contact, TimeEntry } from "@/app/_lib/definitions";
+import { useForm, SubmitHandler } from "react-hook-form";
+import Link from "next/link";
+import { useState } from "react";
+import moment from "moment";
 import Select from "@/app/_components/select";
 import Checkbox from "@/app/_components/checkbox";
-import Link from "next/link";
-import { FormEvent, useState } from "react";
-import moment from "moment";
 import Alert from "@/app/_components/alert";
+import { Contact, TimeEntry } from "@/app/_lib/definitions";
+import { formatTime } from "@/app/_lib/utils";
+import { PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
+
+export type FormValues = {
+  contact: string;
+  all: boolean;
+  entries: Record<string, Record<string, boolean>>;
+};
 
 export default function CreateInvoiceForm({
   contacts,
   timeEntries,
-  onSubmit,
   administrationId,
+  onSubmit,
 }: {
   contacts: Contact[];
   timeEntries: TimeEntry[];
+  administrationId?: string | undefined;
   onSubmit: Function;
-  administrationId: string | undefined;
 }) {
-  const [entries, setEntries] = useState(
-    Object.fromEntries(timeEntries.map(({ id }) => [id, false]))
-  );
-  const [selectAll, setSelectAll] = useState(false);
   const [status, setStatus] = useState("DEFAULT");
   const [invoiceId, setInvoiceId] = useState(null);
 
-  const handleEntriesChange = (id: string, checked: boolean) => {
-    setEntries((prevEntries) => {
-      prevEntries[id] = checked;
-      return { ...prevEntries };
-    });
+  const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
+    defaultValues: {
+      contact: contacts[0]?.id,
+      all: false,
+      entries: {},
+    },
+  });
 
-    if (!checked || selectAll) {
-      setSelectAll(false);
+  const selectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const allChecked = e.target.checked;
+    const fields = getValues("entries");
+
+    Object.entries(fields).forEach(([projectId, entries]) => {
+      Object.entries(entries).forEach(([timeEntryId, checked]) => {
+        if (checked !== allChecked) {
+          setValue(`entries.${projectId}.${timeEntryId}`, allChecked);
+        }
+      });
+    });
+  };
+
+  const handleEntriesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.checked) {
+      setValue("all", false);
     }
   };
 
-  const selectAllChange = (id: string, checked: boolean) => {
-    setSelectAll(checked);
-    setEntries(Object.fromEntries(timeEntries.map(({ id }) => [id, checked])));
-  };
+  const onFormSubmit: SubmitHandler<FormValues> = async (data) => {
+    const detailsAttributes = Object.entries(data.entries).map(
+      ([projectId, entries]) => {
+        const selectedEntries = Object.keys(entries).filter(
+          (key) => entries[key]
+        );
+        if (selectedEntries) {
+          const attributes: {
+            time_entry_ids: string[];
+            amount?: string;
+            product_id?: string;
+            project_id: string;
+            description?: string;
+          } = {
+            project_id: projectId,
+            time_entry_ids: selectedEntries,
+            amount: formatTime(
+              timeEntries.reduce(
+                (acc, { id, ended_at, started_at, paused_duration }) => {
+                  if (selectedEntries.includes(id)) {
+                    const time =
+                      moment(ended_at).diff(
+                        moment(started_at),
+                        "seconds",
+                        true
+                      ) - paused_duration;
+                    return acc + time;
+                  }
+                  return acc;
+                },
+                0
+              )
+            ),
+          };
+          if (PROJECT_PRODUCT_MAP[projectId]) {
+            attributes.product_id = PROJECT_PRODUCT_MAP[projectId];
+          }
 
-  const onFormSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+          return attributes;
+        }
+      }
+    );
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const contact = formData.get("contact");
-    const selectedEntries = timeEntries.filter(({ id }) => entries[id]);
+    const body = {
+      sales_invoice: {
+        contact_id: data.contact,
+        details_attributes: detailsAttributes.filter((el) => el),
+      },
+    };
+
     setStatus("LOADING");
-    const newInvoice = await onSubmit(contact, selectedEntries);
-    if (newInvoice) {
+    const res = await fetch("/api/moneybird/invoices", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const newInvoice = await res.json();
+    
+    if (newInvoice.error) {
+      setStatus("ERROR");
+    } else {
+      onSubmit();
       setStatus("SUCCESS");
       setInvoiceId(newInvoice.id);
-    } else {
-      setStatus("ERROR");
     }
   };
 
   return (
-    <form onSubmit={onFormSubmit}>
+    <form onSubmit={handleSubmit(onFormSubmit)}>
       {status === "SUCCESS" && (
         <Alert type="success">
           <>
@@ -93,6 +163,8 @@ export default function CreateInvoiceForm({
             }))}
             label="Contact"
             name="contact"
+            register={register}
+            required
           />
         </div>
         <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-gray-900">
@@ -101,22 +173,22 @@ export default function CreateInvoiceForm({
         <div className="flex flex-col">
           <Checkbox
             id="all"
-            name="all"
             label="Select all"
-            checked={selectAll}
+            name="all"
+            register={register}
             handleChange={selectAllChange}
           />
 
-          {timeEntries.map(({ id, description, started_at }) => (
+          {timeEntries.map(({ id, description, started_at, project }) => (
             <Checkbox
               key={id}
               id={id}
-              name="timeEntries"
+              name={`entries.${project.id}.${id}`}
               label={`${description} - ${moment(started_at).format(
                 "DD-MM-YYYY"
               )}`}
+              register={register}
               handleChange={handleEntriesChange}
-              checked={entries[id]}
             />
           ))}
         </div>
