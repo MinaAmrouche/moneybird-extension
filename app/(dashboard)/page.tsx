@@ -1,6 +1,6 @@
 import Table from "@/app/(dashboard)/_components/table";
 import Filters from "@/app/(dashboard)/_components/filters";
-import { TimeEntry } from "@/app/_lib/definitions";
+import { Product, TimeEntry } from "@/app/_lib/definitions";
 import { fetchData } from "@/app/_lib/api";
 
 export default async function Home({
@@ -19,6 +19,7 @@ export default async function Home({
       `state:${state},period:${period}`
     )}`
   );
+  const products: Product[] = await fetchData("products");
 
   return (
     <main className="flex min-h-screen flex-col p-10 antialiased">
@@ -31,7 +32,7 @@ export default async function Home({
         </p>
       </div>
       <Filters />
-      <Table timeEntries={timeEntries} />
+      <Table timeEntries={timeEntries} products={products} />
     </main>
   );
 }

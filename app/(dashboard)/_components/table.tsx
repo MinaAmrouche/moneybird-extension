@@ -1,56 +1,94 @@
-import { PRODUCTS, PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
-import { Row, TimeEntry } from "@/app/_lib/definitions";
+"use client";
+
+import {
+  IProjectProductMap,
+  Product,
+  Row,
+  TimeEntry,
+} from "@/app/_lib/definitions";
 import { formatTime } from "@/app/_lib/utils";
 import moment from "moment/moment";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 export default function TimeEntriesTable({
   timeEntries,
+  products,
 }: {
   timeEntries: TimeEntry[];
+  products: Product[];
 }) {
-  let totalTime = 0;
-  let totalAmount = 0;
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [projects, setProjects] = useState<Record<string, string>>({});
+  const [rows, setRows] = useState<Row[]>([]);
 
-  const rows: Row[] = timeEntries.map(
-    ({
-      id,
-      started_at,
-      ended_at,
-      description,
-      contact,
-      project,
-      paused_duration,
-      billable,
-      detail,
-    }) => {
-      const startedAt = moment(started_at);
-      const endedAt = moment(ended_at);
-      const time = endedAt.diff(startedAt, "seconds", true) - paused_duration;
-      const product =
-        project &&
-        PROJECT_PRODUCT_MAP[project.id] &&
-        PRODUCTS[PROJECT_PRODUCT_MAP[project.id]];
-      let amount = 0;
-      if (billable && product) {
-        amount = time * (product.price / 3600);
-      }
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((query: IProjectProductMap[]) => {
+        const projects = query?.reduce<Record<string, string>>(
+          (obj, { projectId, productId }) => (
+            (obj[projectId] = productId), obj
+          ),
+          {}
+        );
 
-      totalTime += time;
-      totalAmount += amount;
+        setProjects(projects);
+      });
+  }, []);
 
-      return {
-        id,
-        date: startedAt.format("DD-MM-YYYY"),
-        description,
-        time: formatTime(time),
-        project: project?.name,
-        state: billable ? (detail ? "Billed" : "Open") : "Non-billable",
-        contact: contact?.company_name,
-        amount: amount.toFixed(2),
-      };
-    }
-  );
+  useEffect(() => {
+    setRows(() => {
+      let totalAmount = 0;
+      let totalTime = 0;
+
+      const rows: Row[] = timeEntries.map(
+        ({
+          id,
+          started_at,
+          ended_at,
+          description,
+          contact,
+          project,
+          paused_duration,
+          billable,
+          detail,
+        }) => {
+          const startedAt = moment(started_at);
+          const endedAt = moment(ended_at);
+          const time =
+            endedAt.diff(startedAt, "seconds", true) - paused_duration;
+          const product = products.find(
+            ({ id }) => id === projects[project?.id]
+          );
+          let amount = 0;
+          if (billable && product) {
+            amount = time * (product.price / 3600);
+          }
+
+          totalAmount += amount;
+          totalTime += time;
+
+          return {
+            id,
+            date: startedAt.format("DD-MM-YYYY"),
+            description,
+            time: formatTime(time),
+            project: project?.name,
+            state: billable ? (detail ? "Billed" : "Open") : "Non-billable",
+            contact: contact?.company_name,
+            amount: amount.toFixed(2),
+          };
+        }
+      );
+
+      setTotalAmount(totalAmount);
+      setTotalTime(totalTime);
+
+      return rows;
+    });
+  }, [projects, timeEntries, products]);
 
   return (
     <div className="flex border rounded-lg p-4 bg-white mt-4">

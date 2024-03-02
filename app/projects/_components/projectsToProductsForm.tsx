@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IProjectProductMap, Product, Project } from "@/app/_lib/definitions";
 import Select from "@/app/_components/select";
-import { db } from "@/app/_lib/database/database.model";
 import Alert from "@/app/_components/alert";
 
 export type FormValues = {
@@ -31,11 +30,14 @@ export default function ProjectsToProductForm({
   const [status, setStatus] = useState("DEFAULT");
   const { handleSubmit, register } = useForm<FormValues>({
     defaultValues: async () => {
-      const query = await db.projects.toArray();
+      const res = await fetch("/api/projects");
+      const query: IProjectProductMap[] = await res.json();
+
       const projects = query?.reduce<Record<string, string>>(
         (obj, { projectId, productId }) => ((obj[projectId] = productId), obj),
         {}
       );
+
       return {
         projects,
       };
@@ -52,7 +54,13 @@ export default function ProjectsToProductForm({
     });
 
     try {
-      await db.projects.bulkPut(ppmap);
+      await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ppmap),
+      });
       setStatus("SUCCESS");
     } catch (error) {
       console.error(`Failed to put objects: ${error}`);

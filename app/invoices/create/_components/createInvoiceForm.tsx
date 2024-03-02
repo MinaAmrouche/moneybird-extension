@@ -2,14 +2,13 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import Select from "@/app/_components/select";
 import Checkbox from "@/app/_components/checkbox";
 import Alert from "@/app/_components/alert";
-import { Contact, TimeEntry } from "@/app/_lib/definitions";
+import { Contact, IProjectProductMap, TimeEntry } from "@/app/_lib/definitions";
 import { formatTime } from "@/app/_lib/utils";
-import { PROJECT_PRODUCT_MAP } from "@/app/_lib/constants";
 
 export type FormValues = {
   contact: string;
@@ -30,6 +29,7 @@ export default function CreateInvoiceForm({
 }) {
   const [status, setStatus] = useState("DEFAULT");
   const [invoiceId, setInvoiceId] = useState(null);
+  const [projects, setProjects] = useState<Record<string, string>>({});
 
   const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
     defaultValues: {
@@ -38,6 +38,21 @@ export default function CreateInvoiceForm({
       entries: {},
     },
   });
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((query: IProjectProductMap[]) => {
+        const projects = query?.reduce<Record<string, string>>(
+          (obj, { projectId, productId }) => (
+            (obj[projectId] = productId), obj
+          ),
+          {}
+        );
+
+        setProjects(projects);
+      });
+  }, []);
 
   const selectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const allChecked = e.target.checked;
@@ -92,8 +107,8 @@ export default function CreateInvoiceForm({
               )
             ),
           };
-          if (PROJECT_PRODUCT_MAP[projectId]) {
-            attributes.product_id = PROJECT_PRODUCT_MAP[projectId];
+          if (projects[projectId]) {
+            attributes.product_id = projects[projectId];
           }
 
           return attributes;
@@ -118,7 +133,7 @@ export default function CreateInvoiceForm({
     });
 
     const newInvoice = await res.json();
-    
+
     if (newInvoice.error) {
       setStatus("ERROR");
     } else {

@@ -54,7 +54,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
-  Product  Product[]
+  projects  Project[]
 
   @@map(name: "users")
 }
@@ -68,7 +68,7 @@ model VerificationToken {
   @@map(name: "verification_tokens")
 }
 
-model Product {
+model Project {
   projectId String    @id
   productId String
   createdAt DateTime @default(now()) @map(name: "created_at")
@@ -76,5 +76,5 @@ model Product {
   userId    String
   user      User @relation(fields: [userId], references: [id])
 
-  @@map(name: "products")
+  @@map(name: "projects")
 }
