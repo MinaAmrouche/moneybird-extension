@@ -124,22 +124,13 @@ export default function CreateInvoiceForm({
     };
 
     setStatus("LOADING");
-    const res = await fetch("/api/moneybird/invoices", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    const invoice = await onSubmit(body);
 
-    const newInvoice = await res.json();
-
-    if (newInvoice.error) {
+    if (!invoice) {
       setStatus("ERROR");
     } else {
-      onSubmit();
       setStatus("SUCCESS");
-      setInvoiceId(newInvoice.id);
+      setInvoiceId(invoice.id);
     }
   };
 

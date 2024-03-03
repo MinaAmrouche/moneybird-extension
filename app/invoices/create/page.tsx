@@ -8,11 +8,18 @@ export default async function CreateInvoicePage() {
   const contacts: Contact[] = await fetchData("contacts");
   const timeEntries: TimeEntry[] = await fetchData(
     `time_entries?filter=${encodeURIComponent("state:open")}`
-    );
-    const session = await getSession();
+  );
+  const session = await getSession();
 
-  const onCreateInvoice = async () => {
+  const onCreateInvoice = async (body: {}) => {
     "use server";
+
+    try {
+      const invoice = await fetchData("sales_invoices", "POST", body);
+      return invoice;
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+    }
 
     revalidatePath("/invoices/create");
   };

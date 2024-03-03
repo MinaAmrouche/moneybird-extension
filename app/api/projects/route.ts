@@ -12,14 +12,17 @@ export async function GET(request: NextRequest) {
     const projects = await db.project.findMany({
       where: {
         userId: user.id,
-      }
+      },
     });
     return Response.json(projects);
   } catch (error) {
     console.error("Error creating invoice:", error);
+
+    return Response.json({
+      success: false,
+    });
   }
 }
-
 
 export async function POST(request: NextRequest) {
   try {
