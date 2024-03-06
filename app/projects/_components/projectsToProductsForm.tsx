@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { IProjectProductMap, Product, Project } from "@/app/_lib/definitions";
+import { ProjectProductMap } from "@/app/_lib/definitions";
+import { Product, Project } from "@/app/_lib/moneybird/definitions";
+import { Project as PrismaProject } from "@prisma/client";
 import Select from "@/app/_components/select";
 import Alert from "@/app/_components/alert";
 
@@ -31,9 +33,9 @@ export default function ProjectsToProductForm({
   const { handleSubmit, register } = useForm<FormValues>({
     defaultValues: async () => {
       const res = await fetch("/api/projects");
-      const query: IProjectProductMap[] = await res.json();
+      const query: PrismaProject[] = await res.json();
 
-      const projects = query?.reduce<Record<string, string>>(
+      const projects = query?.reduce<ProjectProductMap>(
         (obj, { projectId, productId }) => ((obj[projectId] = productId), obj),
         {}
       );
@@ -45,7 +47,7 @@ export default function ProjectsToProductForm({
   });
 
   const mapProjectsToProducts: SubmitHandler<FormValues> = async (data) => {
-    const ppmap: IProjectProductMap[] = [];
+    const ppmap: ProjectProductMap[] = [];
 
     Object.entries(data.projects).forEach(([projectId, productId]) => {
       if (productId) {

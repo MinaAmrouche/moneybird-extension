@@ -1,11 +1,8 @@
 "use client";
 
-import {
-  IProjectProductMap,
-  Product,
-  Row,
-  TimeEntry,
-} from "@/app/_lib/definitions";
+import { Row, ProjectProductMap } from "@/app/_lib/definitions";
+import { Product, TimeEntry } from "@/app/_lib/moneybird/definitions";
+import { Project } from "@prisma/client";
 import { formatTime } from "@/app/_lib/utils";
 import moment from "moment/moment";
 import clsx from "clsx";
@@ -20,14 +17,14 @@ export default function TimeEntriesTable({
 }) {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [totalTime, setTotalTime] = useState<number>(0);
-  const [projects, setProjects] = useState<Record<string, string>>({});
+  const [projects, setProjects] = useState<ProjectProductMap>({});
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
     fetch("/api/projects")
       .then((res) => res.json())
-      .then((query: IProjectProductMap[]) => {
-        const projects = query?.reduce<Record<string, string>>(
+      .then((query: Project[]) => {
+        const projects = query?.reduce<ProjectProductMap>(
           (obj, { projectId, productId }) => (
             (obj[projectId] = productId), obj
           ),

@@ -7,7 +7,9 @@ import moment from "moment";
 import Select from "@/app/_components/select";
 import Checkbox from "@/app/_components/checkbox";
 import Alert from "@/app/_components/alert";
-import { Contact, IProjectProductMap, TimeEntry } from "@/app/_lib/definitions";
+import { ProjectProductMap } from "@/app/_lib/definitions";
+import { Contact, TimeEntry } from "@/app/_lib/moneybird/definitions";
+import { Project } from "@prisma/client";
 import { formatTime } from "@/app/_lib/utils";
 
 export type FormValues = {
@@ -29,7 +31,7 @@ export default function CreateInvoiceForm({
 }) {
   const [status, setStatus] = useState("DEFAULT");
   const [invoiceId, setInvoiceId] = useState(null);
-  const [projects, setProjects] = useState<Record<string, string>>({});
+  const [projects, setProjects] = useState<ProjectProductMap>({});
 
   const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
     defaultValues: {
@@ -42,8 +44,8 @@ export default function CreateInvoiceForm({
   useEffect(() => {
     fetch("/api/projects")
       .then((res) => res.json())
-      .then((query: IProjectProductMap[]) => {
-        const projects = query?.reduce<Record<string, string>>(
+      .then((query: Project[]) => {
+        const projects = query?.reduce<ProjectProductMap>(
           (obj, { projectId, productId }) => (
             (obj[projectId] = productId), obj
           ),

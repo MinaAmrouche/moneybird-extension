@@ -1,18 +1,9 @@
 "use client";
 
+import { User } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 
-export default function LoginBtn({
-  user,
-}: {
-  user:
-    | {
-        name?: string | null;
-        email?: string | null;
-        image?: string | null;
-      }
-    | undefined;
-}) {
+export default function LoginBtn({ user }: { user: User | null }) {
   if (user) {
     return (
       <>

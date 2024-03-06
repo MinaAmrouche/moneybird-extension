@@ -3,11 +3,10 @@
 import Link from "next/link";
 import LoginBtn from "@/app/_components/login-btn";
 import { getSession } from "@/app/_lib/session";
-import { User } from "@/app/_lib/definitions";
 
 export default async function Navbar() {
   const session = await getSession();
-  const user = (session?.user as User) || null;
+  const user = session?.user || null;
 
   return (
     <nav className="block w-full px-6 py-3 mx-auto bg-white border shadow-md border-white/80 bg-opacity-80 backdrop-blur-2xl backdrop-saturate-200">

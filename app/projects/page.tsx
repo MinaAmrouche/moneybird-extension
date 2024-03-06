@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
-import { Product, Project } from "@/app/_lib/definitions";
+import { Product, Project } from "@/app/_lib/moneybird/definitions";
 import ProjectsToProductForm from "@/app/projects/_components/projectsToProductsForm";
-import { fetchData } from "@/app/_lib/api";
+import { fetchData } from "@/app/_lib/moneybird/api";
 
 export default async function ProjectToProductPage() {
   const projects: Project[] = await fetchData("projects");

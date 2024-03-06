@@ -1,8 +1,8 @@
-import { Contact, TimeEntry, User } from "@/app/_lib/definitions";
+import { Contact, TimeEntry } from "@/app/_lib/moneybird/definitions";
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/app/_lib/session";
 import CreateInvoiceForm from "@/app/invoices/create/_components/createInvoiceForm";
-import { fetchData } from "@/app/_lib/api";
+import { fetchData } from "@/app/_lib/moneybird/api";
 
 export default async function CreateInvoicePage() {
   const contacts: Contact[] = await fetchData("contacts");
@@ -33,7 +33,7 @@ export default async function CreateInvoicePage() {
         contacts={contacts}
         timeEntries={timeEntries}
         onSubmit={onCreateInvoice}
-        administrationId={(session?.user as User)?.administrationId}
+        administrationId={session?.user?.administrationId}
       />
     </>
   );
