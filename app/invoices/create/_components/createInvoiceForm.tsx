@@ -150,7 +150,7 @@ export default function CreateInvoiceForm({
         </Alert>
       )}
       <div className="flex flex-col gap-6 mb-1">
-        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-gray-900">
+        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal">
           Choose a contact
         </h6>
         <div className="relative h-11 w-full min-w-[200px]">
@@ -165,7 +165,7 @@ export default function CreateInvoiceForm({
             required
           />
         </div>
-        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal text-gray-900">
+        <h6 className="block -mb-3 font-sans text-base antialiased font-semibold leading-relaxed tracking-normal">
           Select time entries
         </h6>
         <div className="flex flex-col">

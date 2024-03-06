@@ -5,6 +5,7 @@ import CreateInvoiceForm from "@/app/invoices/create/_components/createInvoiceFo
 import { fetchData } from "@/app/_lib/moneybird/api";
 import { db } from "@/app/_lib/db";
 import { Project } from "@prisma/client";
+import Subtitle from "@/app/_components/subtitle";
 
 export default async function CreateInvoicePage() {
   const session = await getSession();
@@ -32,9 +33,7 @@ export default async function CreateInvoicePage() {
 
   return (
     <>
-      <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
-        Create a new invoice.
-      </p>
+      <Subtitle>Create a new invoice.</Subtitle>
       <CreateInvoiceForm
         contacts={contacts}
         timeEntries={timeEntries}

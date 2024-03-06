@@ -98,9 +98,9 @@ const TimeEntriesTable = async ({
   );
 
   return (
-    <div className="flex border rounded-lg p-4 bg-white mt-4">
+    <div className="flex border rounded-lg p-4 bg-white dark:bg-slate-900 mt-4">
       <table className="table-auto w-full">
-        <thead className="font-semibold uppercase text-slate-600 text-sm">
+        <thead className="font-semibold uppercase text-slate-600 dark:text-slate-400 text-sm">
           <tr className="border-b-2">
             <td className="p-2">Date</td>
             <td className="p-2">Description</td>
@@ -113,7 +113,7 @@ const TimeEntriesTable = async ({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.id} className="border-b even:bg-blue-50/50">
+            <tr key={row.id} className="border-b even:bg-blue-50/50 dark:even:bg-slate-800">
               <td className="p-2">{row.date}</td>
               <td className="p-2">{row.description}</td>
               <td className="p-2">{row.project}</td>
@@ -123,9 +123,9 @@ const TimeEntriesTable = async ({
                   className={clsx(
                     "relative grid select-none items-center whitespace-nowrap rounded-full py-1.5 px-3 w-fit font-sans text-xs font-bold uppercase",
                     {
-                      "bg-cyan-500 text-white": row.state === "Open",
-                      "bg-indigo-500 text-white": row.state === "Billed",
-                      "bg-gray-900/10 text-gray-900":
+                      "bg-cyan-500 dark:bg-transparent  dark:border dark:border-cyan-500 text-white dark:text-cyan-500": row.state === "Open",
+                      "bg-indigo-500 dark:bg-transparent dark:border dark:border-indigo-500 text-white dark:text-indigo-500": row.state === "Billed",
+                      "bg-gray-900 dark:bg-transparent dark:border dark:border-gray-300 text-gray-900 dark:text-gray-300":
                         row.state === "Non-billable",
                     }
                   )}

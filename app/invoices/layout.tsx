@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Spinner from "@/app/_components/spinner";
+import Title from "@/app/_components/title";
 
 export default function InvoicesLayout({
   children,
@@ -7,13 +8,9 @@ export default function InvoicesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-screen flex-col p-10 antialiased">
-      <div className="px-4 sm:px-0 mb-4">
-        <h3 className="text-base font-semibold leading-7 text-gray-900">
-          Invoices
-        </h3>
-      </div>
+    <>
+      <Title>Invoices</Title>
       <Suspense fallback={<Spinner />}>{children}</Suspense>
-    </main>
+    </>
   );
 }
