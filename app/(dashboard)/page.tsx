@@ -1,7 +1,7 @@
-import Table from "@/app/(dashboard)/_components/table";
+import { Suspense } from "react";
 import Filters from "@/app/(dashboard)/_components/filters";
-import { Product, TimeEntry } from "@/app/_lib/definitions";
-import { fetchData } from "@/app/_lib/api";
+import Spinner from "@/app/_components/spinner";
+import TimeEntriesTable from "@/app/(dashboard)/_components/table";
 
 export default async function Home({
   searchParams,
@@ -14,13 +14,6 @@ export default async function Home({
   const state = searchParams?.state || "all";
   const period = searchParams?.period || "this_month";
 
-  const timeEntries: TimeEntry[] = await fetchData(
-    `time_entries?filter=${encodeURIComponent(
-      `state:${state},period:${period}`
-    )}`
-  );
-  const products: Product[] = await fetchData("products");
-
   return (
     <main className="flex min-h-screen flex-col p-10 antialiased">
       <div className="px-4 sm:px-0 mb-4">
@@ -31,8 +24,10 @@ export default async function Home({
           Total hours and amount
         </p>
       </div>
-      <Filters />
-      <Table timeEntries={timeEntries} products={products} />
+      <Filters state={state} period={period} />
+      <Suspense fallback={<Spinner />}>
+        <TimeEntriesTable state={state} period={period} />
+      </Suspense>
     </main>
   );
 }

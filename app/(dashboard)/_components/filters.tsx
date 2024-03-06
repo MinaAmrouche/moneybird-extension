@@ -18,24 +18,30 @@ const STATES = [
 
 const PERIODS = [
   { value: "this_month", label: "This month" },
-  { value: "prev_month", label: "Previous month" },
+  { value: "prev_month", label: "Last month" },
   { value: "next_month", label: "Next month" },
   { value: "this_quarter", label: "This quarter" },
-  { value: "prev_quarter", label: "Previous quarter" },
+  { value: "prev_quarter", label: "Last quarter" },
   { value: "next_quarter", label: "Next quarter" },
   { value: "this_year", label: "This year" },
-  { value: "prev_year", label: "Previous year" },
+  { value: "prev_year", label: "Last year" },
   { value: "next_year", label: "Next year" },
 ];
 
-export default function Filters() {
+export default function Filters({
+  state,
+  period,
+}: {
+  state?: string;
+  period?: string;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const form = useForm<FormValues>({
     defaultValues: {
-      state: searchParams.get("state")?.toString() ?? "all",
-      period: searchParams.get("period")?.toString() ?? "this_month",
+      state: state ?? "all",
+      period: period ?? "this_month",
     },
   });
 
