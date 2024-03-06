@@ -1,7 +1,7 @@
 import { Row, ProjectProductMap } from "@/app/_lib/definitions";
 import { Product, TimeEntry } from "@/app/_lib/moneybird/definitions";
 import { Project } from "@prisma/client";
-import { formatTime } from "@/app/_lib/utils";
+import { formatTime, projectsToMap } from "@/app/_lib/utils";
 import moment from "moment/moment";
 import clsx from "clsx";
 import { getSession } from "@/app/_lib/session";
@@ -89,11 +89,7 @@ const TimeEntriesTable = async ({
   const [timeEntries, products, projects]: [TimeEntry[], Product[], Project[]] =
     await Promise.all([timeEntriesPromise, productsPromise, getProjects()]);
 
-  const projectProductMap: ProjectProductMap =
-    projects?.reduce<ProjectProductMap>(
-      (obj, { projectId, productId }) => ((obj[projectId] = productId), obj),
-      {}
-    ) || {};
+  const projectProductMap: ProjectProductMap = projectsToMap(projects);
 
   const [rows, totalAmount, totalTime]: [Row[], number, number] = createRows(
     timeEntries,
