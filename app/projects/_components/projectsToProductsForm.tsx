@@ -7,6 +7,7 @@ import { Product, Project } from "@/app/_lib/moneybird/definitions";
 import { Project as PrismaProject } from "@prisma/client";
 import Select from "@/app/_components/select";
 import Alert from "@/app/_components/alert";
+import { projectsToMap } from "@/app/_lib/utils";
 
 export type FormValues = {
   projects: Record<string, string>;
@@ -15,10 +16,12 @@ export type FormValues = {
 export default function ProjectsToProductForm({
   projects,
   products,
+  projectsToProduct,
   onSubmit,
 }: {
   projects: Project[];
   products: Product[];
+  projectsToProduct: PrismaProject[];
   onSubmit: Function;
 }) {
   const [options] = useState(() => {
@@ -31,18 +34,8 @@ export default function ProjectsToProductForm({
   });
   const [status, setStatus] = useState("DEFAULT");
   const { handleSubmit, register } = useForm<FormValues>({
-    defaultValues: async () => {
-      const res = await fetch("/api/projects");
-      const query: PrismaProject[] = await res.json();
-
-      const projects = query?.reduce<ProjectProductMap>(
-        (obj, { projectId, productId }) => ((obj[projectId] = productId), obj),
-        {}
-      );
-
-      return {
-        projects,
-      };
+    defaultValues: {
+      projects: projectsToMap(projectsToProduct),
     },
   });
 
@@ -56,20 +49,13 @@ export default function ProjectsToProductForm({
     });
 
     try {
-      await fetch("/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(ppmap),
-      });
+      setStatus("LOADING");
+      await onSubmit(ppmap);
       setStatus("SUCCESS");
     } catch (error) {
       console.error(`Failed to put objects: ${error}`);
       setStatus("ERROR");
     }
-
-    await onSubmit();
   };
 
   return (

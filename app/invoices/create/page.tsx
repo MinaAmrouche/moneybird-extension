@@ -3,25 +3,31 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/app/_lib/session";
 import CreateInvoiceForm from "@/app/invoices/create/_components/createInvoiceForm";
 import { fetchData } from "@/app/_lib/moneybird/api";
+import { db } from "@/app/_lib/db";
+import { Project } from "@prisma/client";
 
 export default async function CreateInvoicePage() {
-  const contacts: Contact[] = await fetchData("contacts");
-  const timeEntries: TimeEntry[] = await fetchData(
+  const session = await getSession();
+
+  const timeEntriesPromise = fetchData(
     `time_entries?filter=${encodeURIComponent("state:open")}`
   );
-  const session = await getSession();
+  const contactsPromise = fetchData("contacts");
+  const projectsPromise = db.project.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+  });
+
+  const [timeEntries, contacts, projects]: [TimeEntry[], Contact[], Project[]] =
+    await Promise.all([timeEntriesPromise, contactsPromise, projectsPromise]);
 
   const onCreateInvoice = async (body: {}) => {
     "use server";
 
-    try {
-      const invoice = await fetchData("sales_invoices", "POST", body);
-      return invoice;
-    } catch (error) {
-      console.error("Error creating invoice:", error);
-    }
-
+    const invoice = await fetchData("sales_invoices", "POST", body);
     revalidatePath("/invoices/create");
+    return invoice;
   };
 
   return (
@@ -32,6 +38,7 @@ export default async function CreateInvoicePage() {
       <CreateInvoiceForm
         contacts={contacts}
         timeEntries={timeEntries}
+        projects={projects}
         onSubmit={onCreateInvoice}
         administrationId={session?.user?.administrationId}
       />

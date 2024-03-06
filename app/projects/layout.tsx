@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import Spinner from "@/app/_components/spinner";
+
 export default function ProjectsLayout({
   children,
 }: {
@@ -13,7 +16,7 @@ export default function ProjectsLayout({
           Link your projects to a product
         </p>
       </div>
-      {children}
+      <Suspense fallback={<Spinner />}>{children}</Suspense>
     </main>
   );
 }

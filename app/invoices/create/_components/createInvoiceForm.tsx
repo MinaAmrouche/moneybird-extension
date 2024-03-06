@@ -10,7 +10,7 @@ import Alert from "@/app/_components/alert";
 import { ProjectProductMap } from "@/app/_lib/definitions";
 import { Contact, TimeEntry } from "@/app/_lib/moneybird/definitions";
 import { Project } from "@prisma/client";
-import { formatTime } from "@/app/_lib/utils";
+import { formatTime, projectsToMap } from "@/app/_lib/utils";
 
 export type FormValues = {
   contact: string;
@@ -21,17 +21,19 @@ export type FormValues = {
 export default function CreateInvoiceForm({
   contacts,
   timeEntries,
+  projects,
   administrationId,
   onSubmit,
 }: {
   contacts: Contact[];
   timeEntries: TimeEntry[];
+  projects: Project[];
   administrationId?: string | undefined;
   onSubmit: Function;
 }) {
   const [status, setStatus] = useState("DEFAULT");
   const [invoiceId, setInvoiceId] = useState(null);
-  const [projects, setProjects] = useState<ProjectProductMap>({});
+  const [projectProductMap, setProjectProductMap] = useState<ProjectProductMap>({});
 
   const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
     defaultValues: {
@@ -42,19 +44,8 @@ export default function CreateInvoiceForm({
   });
 
   useEffect(() => {
-    fetch("/api/projects")
-      .then((res) => res.json())
-      .then((query: Project[]) => {
-        const projects = query?.reduce<ProjectProductMap>(
-          (obj, { projectId, productId }) => (
-            (obj[projectId] = productId), obj
-          ),
-          {}
-        );
-
-        setProjects(projects);
-      });
-  }, []);
+    setProjectProductMap(projectsToMap(projects));
+  }, [projects])
 
   const selectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const allChecked = e.target.checked;
@@ -109,8 +100,8 @@ export default function CreateInvoiceForm({
               )
             ),
           };
-          if (projects[projectId]) {
-            attributes.product_id = projects[projectId];
+          if (projectProductMap[projectId]) {
+            attributes.product_id = projectProductMap[projectId];
           }
 
           return attributes;
@@ -125,14 +116,13 @@ export default function CreateInvoiceForm({
       },
     };
 
-    setStatus("LOADING");
-    const invoice = await onSubmit(body);
-
-    if (!invoice) {
-      setStatus("ERROR");
-    } else {
+    try {
+      setStatus("LOADING");
+      const invoice = await onSubmit(body);
       setStatus("SUCCESS");
       setInvoiceId(invoice.id);
+    } catch (error) {
+      setStatus("ERROR");
     }
   };
 
