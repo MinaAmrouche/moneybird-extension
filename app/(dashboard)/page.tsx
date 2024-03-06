@@ -4,6 +4,7 @@ import Spinner from "@/app/_components/spinner";
 import TimeEntriesTable from "@/app/(dashboard)/_components/table";
 import Title from "@/app/_components/title";
 import Subtitle from "@/app/_components/subtitle";
+import { Period, State } from "../_lib/definitions";
 
 export default async function Home({
   searchParams,
@@ -20,9 +21,9 @@ export default async function Home({
     <>
       <Title>Report</Title>
       <Subtitle>Total hours and amount</Subtitle>
-      <Filters state={state} period={period} />
+      <Filters state={state as State} period={period as Period} />
       <Suspense fallback={<Spinner />}>
-        <TimeEntriesTable state={state} period={period} />
+        <TimeEntriesTable state={state as State} period={period as Period} />
       </Suspense>
     </>
   );

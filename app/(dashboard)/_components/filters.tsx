@@ -4,15 +4,17 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Select from "@/app/_components/select";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { Period, State } from "@/app/_lib/definitions";
 
 export type FormValues = {
-  state: string;
-  period: string;
+  state: State;
+  period: Period;
 };
 
 const STATES = [
   { value: "all", label: "All" },
   { value: "non_billable", label: "Non-billable" },
+  { value: "billed", label: "Billed" },
   { value: "open", label: "Open" },
 ];
 
@@ -32,8 +34,8 @@ export default function Filters({
   state,
   period,
 }: {
-  state?: string;
-  period?: string;
+  state?: State;
+  period?: Period;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
