@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Navbar />
-        <main className="flex min-h-screen flex-col p-10 antialiased bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
+        <main className="flex min-h-screen flex-col p-10 pt-20 antialiased bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
           {children}
         </main>
       </body>
