@@ -10,23 +10,29 @@ import Subtitle from "@/app/_components/subtitle";
 export default async function CreateInvoicePage() {
   const session = await getSession();
 
-  const timeEntriesPromise = fetchData(
-    `time_entries?filter=${encodeURIComponent("state:open")}`
-  );
-  const contactsPromise = fetchData("contacts");
   const projectsPromise = db.project.findMany({
     where: {
       userId: session?.user.id,
     },
   });
 
-  const [timeEntries, contacts, projects]: [TimeEntry[], Contact[], Project[]] =
-    await Promise.all([timeEntriesPromise, contactsPromise, projectsPromise]);
+  const [timeEntriesPromise, contactsPromise] = await Promise.all([
+    fetchData(`time_entries?filter=${encodeURIComponent("state:open")}`),
+    fetchData("contacts"),
+  ]);
+
+  let [timeEntries, contacts, projects]: [TimeEntry[], Contact[], Project[]] =
+    await Promise.all([
+      timeEntriesPromise.json(),
+      contactsPromise.json(),
+      projectsPromise,
+    ]);
 
   const onCreateInvoice = async (body: {}) => {
     "use server";
 
-    const invoice = await fetchData("sales_invoices", "POST", body);
+    const res = await fetchData("sales_invoices", "POST", body);
+    const invoice = await res.json();
     revalidatePath("/invoices/create");
     return invoice;
   };

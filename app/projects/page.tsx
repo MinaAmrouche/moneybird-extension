@@ -10,21 +10,24 @@ import { db } from "@/app/_lib/db";
 import { getSession } from "@/app/_lib/session";
 
 export default async function ProjectToProductPage() {
-  const projectsPromise = fetchData("projects");
-  const productsPromise = fetchData("products");
   const projectsToProductPromise = db.project.findMany({
     where: {
       userId: (await getSession())?.user.id,
     },
   });
 
+  const [projectsPromise, productsPromise] = await Promise.all([
+    fetchData("projects"),
+    fetchData("products"),
+  ]);
+
   const [projects, products, projectsToProduct]: [
     Project[],
     Product[],
     PrismaProject[]
   ] = await Promise.all([
-    projectsPromise,
-    productsPromise,
+    projectsPromise.json(),
+    productsPromise.json(),
     projectsToProductPromise,
   ]);
 

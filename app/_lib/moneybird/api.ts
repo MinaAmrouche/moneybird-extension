@@ -38,5 +38,5 @@ export const fetchData = async (
     throw new Error(error);
   }
 
-  return await response.json();
+  return response;
 };
