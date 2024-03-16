@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Filters from "@/app/(dashboard)/_components/filters";
 import Spinner from "@/app/_components/spinner";
-import TimeEntriesTable from "@/app/(dashboard)/_components/timeEntriesTable";
+import TimeEntriesTable from "@/app/(dashboard)/_components/table";
 import Title from "@/app/_components/title";
 import Subtitle from "@/app/_components/subtitle";
 import { Period, State } from "@/app/_lib/definitions";

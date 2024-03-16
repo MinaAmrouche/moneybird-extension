@@ -33,9 +33,9 @@ export const fetchData = async (
     `${process.env.API_URL}/${session.user.administrationId}/` + url;
   const response = await fetch(fullUrl, options);
 
-  if (response.statusText !== "OK") {
+  if (response.status >= 400) {
     const error = await response.json();
-    throw new Error(error);
+    throw new Error(error.error);
   }
 
   return response;

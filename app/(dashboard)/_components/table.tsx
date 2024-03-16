@@ -1,33 +1,59 @@
-"use client";
-
-import { Row } from "@/app/_lib/definitions";
+import { Row, State, Period } from "@/app/_lib/definitions";
+import { Product, TimeEntry } from "@/app/_lib/moneybird/definitions";
+import { Project } from "@prisma/client";
 import { formatTime } from "@/app/_lib/utils";
-import clsx from "clsx";
+import {
+  fetchProducts,
+  fetchTimeEntries,
+  getProjects,
+  createRows,
+  getTotalPages,
+  getTotals,
+} from "@/app/_core/dashboard/table";
 import Pagination from "@/app/_components/pagination";
-import { useEffect, useState } from "react";
+import clsx from "clsx";
 
-const Table = ({
-  rows,
-  totalAmount,
-  totalTime,
-  hasNextPage,
-  page,
+const TimeEntriesTable = async ({
+  state,
+  period,
+  page = 1,
+  itemsPerPage = 20,
 }: {
-  rows: Row[];
-  totalAmount: number;
-  totalTime: number;
-  hasNextPage: boolean;
-  page: number;
+  state: State;
+  period: Period;
+  page?: number;
+  itemsPerPage?: number;
 }) => {
-  const [totalPages, setTotalPages] = useState<number>(page);
+  let timeEntries: TimeEntry[] = [];
+  let products: Product[] = [];
+  let projects: Project[] = [];
 
-  useEffect(() => {
-    if (hasNextPage && page >= totalPages) {
-      setTotalPages(page + 1);
-    } else if (!hasNextPage || totalPages < page || !rows.length) {
-      setTotalPages(page);
-    }
-  }, [page, hasNextPage, rows]);
+  [timeEntries, products, projects] = await Promise.all([
+    fetchTimeEntries(
+      encodeURIComponent(
+        `state:${state === "billed" ? "all" : state},period:${period}`
+      )
+    ),
+    fetchProducts(),
+    getProjects(),
+  ]);
+
+  if (state === "billed") {
+    timeEntries = timeEntries.filter(
+      (timeEntry) => timeEntry.billable && timeEntry.detail
+    );
+  }
+
+  const totalPages = getTotalPages(itemsPerPage, timeEntries);
+
+  const [totalAmount, totalTime] = getTotals(timeEntries, products, projects);
+
+  const [rows, totalAmountOnPage, totalTimeOnPage]: [Row[], number, number] =
+    createRows(
+      timeEntries.slice((page - 1) * itemsPerPage, page * itemsPerPage),
+      products,
+      projects
+    );
 
   return (
     <>
@@ -81,6 +107,21 @@ const Table = ({
               <td></td>
               <td></td>
               <td className="p-2">
+                <b>Total on page</b>
+              </td>
+              <td className="p-2">
+                <b>{formatTime(totalTimeOnPage)}</b>
+              </td>
+              <td className="p-2">
+                <b>€{totalAmountOnPage.toFixed(2)}</b>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td className="p-2">
                 <b>Total</b>
               </td>
               <td className="p-2">
@@ -98,4 +139,4 @@ const Table = ({
   );
 };
 
-export default Table;
+export default TimeEntriesTable;

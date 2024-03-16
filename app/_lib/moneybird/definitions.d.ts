@@ -10,6 +10,7 @@ export type TimeEntry = {
   };
   contact: Contact;
   project: Project;
+  project_id: string;
 };
 
 export type Contact = {
