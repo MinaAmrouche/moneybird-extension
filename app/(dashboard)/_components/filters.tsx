@@ -60,7 +60,7 @@ export default function Filters({
   };
 
   return (
-    <div className="flex justify-between align-center">
+    <div className="flex justify-between align-center gap-4">
       <div className="flex gap-4">
         <Select
           options={STATES}
@@ -79,7 +79,7 @@ export default function Filters({
       </div>
       <Link
         href="/invoices/create"
-        className="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-blue-500 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none flex items-center gap-3"
+        className="align-middle select-none text-nowrap font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-blue-500 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none flex items-center gap-3"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
