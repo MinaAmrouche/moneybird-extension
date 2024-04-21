@@ -4,31 +4,35 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Select from "@/app/_components/select";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Period, State } from "@/app/_lib/definitions";
+import { PERIODS, Period, STATES, State } from "@/app/_lib/definitions.d";
 
 export type FormValues = {
   state: State;
   period: Period;
 };
 
-const STATES = [
-  { value: "all", label: "All" },
-  { value: "non_billable", label: "Non-billable" },
-  { value: "billed", label: "Billed" },
-  { value: "open", label: "Open" },
-];
+const capitalizeString = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
-const PERIODS = [
-  { value: "this_month", label: "This month" },
-  { value: "prev_month", label: "Last month" },
-  { value: "next_month", label: "Next month" },
-  { value: "this_quarter", label: "This quarter" },
-  { value: "prev_quarter", label: "Last quarter" },
-  { value: "next_quarter", label: "Next quarter" },
-  { value: "this_year", label: "This year" },
-  { value: "prev_year", label: "Last year" },
-  { value: "next_year", label: "Next year" },
-];
+const STATES_OPTIONS: Array<{ value: State; label: string }> = STATES.map(
+  (state) => {
+    const label = state.replace("_", "-");
+    return {
+      value: state,
+      label: capitalizeString(label),
+    };
+  }
+);
+
+const PERIODS_OPTIONS: Array<{ value: Period; label: string }> = PERIODS.map(
+  (period) => {
+    const label = period.replace("_", " ");
+    return {
+      value: period,
+      label: capitalizeString(label),
+    };
+  }
+);
 
 export default function Filters({
   state,
@@ -63,14 +67,14 @@ export default function Filters({
     <div className="flex justify-between align-center gap-4">
       <div className="flex gap-4">
         <Select
-          options={STATES}
+          options={STATES_OPTIONS}
           label="State"
           name="state"
           register={form.register}
           handleChange={handleFilterChange}
         />
         <Select
-          options={PERIODS}
+          options={PERIODS_OPTIONS}
           label="Period"
           name="period"
           register={form.register}
