@@ -11,15 +11,17 @@ export type Row = {
 
 export type ProjectProductMap = Record<string, string>;
 
-export type State = "all" | "open" | "billed" | "non-billable";
+export const STATES = ["all", "open", "billed", "non-billable"];
 
-export type Period =
-  | "this_month"
-  | "prev_month"
-  | "next_month"
-  | "this_quarter"
-  | "prev_quarter"
-  | "next_quarter"
-  | "this_year"
-  | "prev_year"
-  | "next_year";
+export type State = (typeof STATES)[number];
+
+export const PERIODS = [
+  "this_month",
+  "prev_month",
+  "this_quarter",
+  "prev_quarter",
+  "this_year",
+  "prev_year",
+];
+
+export type Period = (typeof PERIODS)[number];

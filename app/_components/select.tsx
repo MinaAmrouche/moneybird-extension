@@ -38,7 +38,7 @@ export default function Select<TFieldValues extends FieldValues = FieldValues>({
   handleChange,
 }: SelectProps<TFieldValues>) {
   return (
-    <div className="relative h-10 w-72 min-w-[200px]">
+    <div className="relative h-10 w-44">
       <select
         className={clsx(selectClasses)}
         id={name}

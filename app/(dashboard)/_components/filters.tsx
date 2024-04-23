@@ -4,31 +4,35 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Select from "@/app/_components/select";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Period, State } from "@/app/_lib/definitions";
+import { PERIODS, Period, STATES, State } from "@/app/_lib/definitions.d";
 
 export type FormValues = {
   state: State;
   period: Period;
 };
 
-const STATES = [
-  { value: "all", label: "All" },
-  { value: "non_billable", label: "Non-billable" },
-  { value: "billed", label: "Billed" },
-  { value: "open", label: "Open" },
-];
+const capitalizeString = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
-const PERIODS = [
-  { value: "this_month", label: "This month" },
-  { value: "prev_month", label: "Last month" },
-  { value: "next_month", label: "Next month" },
-  { value: "this_quarter", label: "This quarter" },
-  { value: "prev_quarter", label: "Last quarter" },
-  { value: "next_quarter", label: "Next quarter" },
-  { value: "this_year", label: "This year" },
-  { value: "prev_year", label: "Last year" },
-  { value: "next_year", label: "Next year" },
-];
+const STATES_OPTIONS: Array<{ value: State; label: string }> = STATES.map(
+  (state) => {
+    const label = state.replace("_", "-");
+    return {
+      value: state,
+      label: capitalizeString(label),
+    };
+  }
+);
+
+const PERIODS_OPTIONS: Array<{ value: Period; label: string }> = PERIODS.map(
+  (period) => {
+    const label = period.replace("_", " ");
+    return {
+      value: period,
+      label: capitalizeString(label),
+    };
+  }
+);
 
 export default function Filters({
   state,
@@ -60,17 +64,17 @@ export default function Filters({
   };
 
   return (
-    <div className="flex justify-between align-center">
+    <div className="flex justify-between align-center gap-4">
       <div className="flex gap-4">
         <Select
-          options={STATES}
+          options={STATES_OPTIONS}
           label="State"
           name="state"
           register={form.register}
           handleChange={handleFilterChange}
         />
         <Select
-          options={PERIODS}
+          options={PERIODS_OPTIONS}
           label="Period"
           name="period"
           register={form.register}
@@ -79,7 +83,7 @@ export default function Filters({
       </div>
       <Link
         href="/invoices/create"
-        className="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-blue-500 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none flex items-center gap-3"
+        className="align-middle select-none text-nowrap font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg bg-blue-500 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none flex items-center gap-3"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

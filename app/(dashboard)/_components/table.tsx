@@ -57,7 +57,7 @@ const TimeEntriesTable = async ({
 
   return (
     <>
-      <div className="flex border rounded-lg p-4 dark:p-0 bg-white dark:bg-slate-900 mt-4">
+      <div className="flex border rounded-lg p-4 dark:p-0 bg-white dark:bg-slate-900 mt-4 sm:w-max md:w-full">
         <table className="table-auto w-full">
           <thead className="font-semibold uppercase text-slate-600 dark:text-slate-400 text-sm">
             <tr className="border-b-2">
@@ -89,7 +89,7 @@ const TimeEntriesTable = async ({
                           row.state === "Open",
                         "bg-indigo-500 dark:bg-transparent dark:border dark:border-indigo-500 text-white dark:text-indigo-500":
                           row.state === "Billed",
-                        "bg-gray-900 dark:bg-transparent dark:border dark:border-gray-300 text-gray-900 dark:text-gray-300":
+                        "bg-gray-900 dark:bg-transparent dark:border dark:border-gray-300 text-white dark:text-gray-300":
                           row.state === "Non-billable",
                       }
                     )}
