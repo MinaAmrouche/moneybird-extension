@@ -16,11 +16,13 @@ import clsx from "clsx";
 const TimeEntriesTable = async ({
   state,
   period,
+  contact,
   page = 1,
   itemsPerPage = 20,
 }: {
   state: State;
   period: Period;
+  contact: string;
   page?: number;
   itemsPerPage?: number;
 }) => {
@@ -31,7 +33,9 @@ const TimeEntriesTable = async ({
   [timeEntries, products, projects] = await Promise.all([
     fetchTimeEntries(
       encodeURIComponent(
-        `state:${state === "billed" ? "all" : state},period:${period}`
+        `state:${
+          state === "billed" ? "all" : state
+        },period:${period},contact_id:${contact}`
       )
     ),
     fetchProducts(),

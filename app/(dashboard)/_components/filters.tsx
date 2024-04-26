@@ -5,10 +5,12 @@ import Select from "@/app/_components/select";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { PERIODS, Period, STATES, State } from "@/app/_lib/definitions.d";
+import { Contact } from "@/app/_lib/moneybird/definitions";
 
 export type FormValues = {
   state: State;
   period: Period;
+  contact?: string;
 };
 
 const capitalizeString = (str: string) =>
@@ -37,9 +39,13 @@ const PERIODS_OPTIONS: Array<{ value: Period; label: string }> = PERIODS.map(
 export default function Filters({
   state,
   period,
+  contact,
+  contacts,
 }: {
   state?: State;
   period?: Period;
+  contact?: string;
+  contacts: Contact[];
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -48,6 +54,7 @@ export default function Filters({
     defaultValues: {
       state: state ?? "all",
       period: period ?? "this_month",
+      contact: contact ?? "",
     },
   });
 
@@ -77,6 +84,16 @@ export default function Filters({
           options={PERIODS_OPTIONS}
           label="Period"
           name="period"
+          register={form.register}
+          handleChange={handleFilterChange}
+        />
+        <Select
+          options={contacts.map((contact) => ({
+            value: contact.id,
+            label: contact.company_name,
+          }))}
+          label="Contact"
+          name="contact"
           register={form.register}
           handleChange={handleFilterChange}
         />
