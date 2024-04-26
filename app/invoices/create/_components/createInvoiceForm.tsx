@@ -11,6 +11,7 @@ import { ProjectProductMap } from "@/app/_lib/definitions";
 import { Contact, TimeEntry } from "@/app/_lib/moneybird/definitions";
 import { Project } from "@prisma/client";
 import { formatTime, projectsToMap } from "@/app/_lib/utils";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 export type FormValues = {
   contact: string;
@@ -31,13 +32,19 @@ export default function CreateInvoiceForm({
   administrationId?: string | undefined;
   onSubmit: Function;
 }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
   const [status, setStatus] = useState("DEFAULT");
   const [invoiceId, setInvoiceId] = useState(null);
-  const [projectProductMap, setProjectProductMap] = useState<ProjectProductMap>({});
+  const [projectProductMap, setProjectProductMap] = useState<ProjectProductMap>(
+    {}
+  );
 
   const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
     defaultValues: {
-      contact: contacts[0]?.id,
+      contact: searchParams?.get("contact") || "",
       all: false,
       entries: {},
     },
@@ -45,7 +52,7 @@ export default function CreateInvoiceForm({
 
   useEffect(() => {
     setProjectProductMap(projectsToMap(projects));
-  }, [projects])
+  }, [projects]);
 
   const selectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const allChecked = e.target.checked;
@@ -64,6 +71,18 @@ export default function CreateInvoiceForm({
     if (!e.target.checked) {
       setValue("all", false);
     }
+  };
+
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    replace(`${pathname}?${params.toString()}`);
   };
 
   const onFormSubmit: SubmitHandler<FormValues> = async (data) => {
@@ -162,6 +181,7 @@ export default function CreateInvoiceForm({
             label="Contact"
             name="contact"
             register={register}
+            handleChange={handleContactChange}
             required
           />
         </div>

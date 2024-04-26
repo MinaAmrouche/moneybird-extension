@@ -7,7 +7,15 @@ import { db } from "@/app/_lib/db";
 import { Project } from "@prisma/client";
 import Subtitle from "@/app/_components/subtitle";
 
-export default async function CreateInvoicePage() {
+export default async function CreateInvoicePage({
+  searchParams,
+}: {
+  searchParams?: {
+    contact?: string;
+  };
+}) {
+  const contact = searchParams?.contact || "";
+
   const session = await getSession();
 
   const projectsPromise = db.project.findMany({
@@ -17,8 +25,12 @@ export default async function CreateInvoicePage() {
   });
 
   const [timeEntriesPromise, contactsPromise] = await Promise.all([
-    fetchData(`time_entries?filter=${encodeURIComponent("state:open")}`),
-    fetchData("contacts"),
+    fetchData(
+      `time_entries?filter=${encodeURIComponent(
+        `state:open,contact_id:${contact}`
+      )}`
+    ),
+    fetchData("contacts?per_page=100"),
   ]);
 
   let [timeEntries, contacts, projects]: [TimeEntry[], Contact[], Project[]] =
