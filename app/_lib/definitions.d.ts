@@ -11,7 +11,7 @@ export type Row = {
 
 export type ProjectProductMap = Record<string, string>;
 
-export const STATES = ["all", "open", "billed", "non-billable"];
+export const STATES = ["all", "open", "billed", "non_billable"];
 
 export type State = (typeof STATES)[number];
 
