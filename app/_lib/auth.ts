@@ -1,7 +1,6 @@
 import { NextAuthOptions, User } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "@/app/_lib/db";
-import { AdapterUser } from "next-auth/adapters";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db as any), // @see GitHub: https://github.com/nextauthjs/next-auth/issues/7727#issuecomment-1688714579
