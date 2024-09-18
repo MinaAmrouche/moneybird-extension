@@ -14,6 +14,10 @@ const LINKS = [
     label: "Create invoice",
   },
   {
+    href: "/invoices/update",
+    label: "Update invoice",
+  },
+  {
     href: "/projects",
     label: "Projects to Products",
   },
