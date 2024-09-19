@@ -35,8 +35,6 @@ export default async function CreateInvoicePage({}: {}) {
   const onUpdateInvoice = async (invoiceId: string, body: {}) => {
     "use server";
 
-    console.log(invoiceId, body.sales_invoice.details_attributes.time_entry_ids);
-
     const res = await fetchData(`sales_invoices/${invoiceId}`, "PATCH", body);
     const invoice = await res.json();
     revalidatePath("/invoices/update");

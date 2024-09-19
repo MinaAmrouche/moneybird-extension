@@ -16,6 +16,10 @@ export type FormValues = {
   entries: string[];
 };
 
+const defaultValues = {
+  invoice: "",
+};
+
 export default function UpdateInvoiceForm({
   invoices,
   getInvoiceDetails,
@@ -31,7 +35,9 @@ export default function UpdateInvoiceForm({
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
 
-  const { handleSubmit, register, setValue, getValues } = useForm<FormValues>();
+  const { handleSubmit, register, setValue, getValues } = useForm<FormValues>({
+    defaultValues,
+  });
 
   // const selectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const allChecked = e.target.checked;
@@ -56,10 +62,8 @@ export default function UpdateInvoiceForm({
     const invoiceId = event.target.value;
     try {
       const [invoice, timeEntries] = await getInvoiceDetails(invoiceId);
-      console.log(invoice);
       setInvoice(invoice);
       setTimeEntries(timeEntries);
-    console.log(timeEntries);
     } catch (error) {
       console.error(`Failed to put objects: ${error}`);
     }
@@ -70,14 +74,15 @@ export default function UpdateInvoiceForm({
       setStatus("LOADING");
       const body = {
         sales_invoice: {
-          details_attributes: {
-            id: data.detail,
-            time_entry_ids: data.entries,
-          },
+          details_attributes: [
+            {
+              id: data.detail,
+              time_entry_ids: data.entries,
+            },
+          ],
         },
       };
       const invoice = await onSubmit(data.invoice, body);
-      console.log(invoice);
       setInvoice(invoice);
       setStatus("SUCCESS");
     } catch (error) {
