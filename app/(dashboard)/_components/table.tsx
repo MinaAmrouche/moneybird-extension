@@ -48,12 +48,12 @@ const TimeEntriesTable = async ({
     );
   }
 
-  const totalPages = getTotalPages(itemsPerPage, timeEntries);
+  const totalPages = await getTotalPages(itemsPerPage, timeEntries);
 
-  const [totalAmount, totalTime] = getTotals(timeEntries, products, projects);
+  const [totalAmount, totalTime] = await getTotals(timeEntries, products, projects);
 
   const [rows, totalAmountOnPage, totalTimeOnPage]: [Row[], number, number] =
-    createRows(
+    await createRows(
       timeEntries.slice((page - 1) * itemsPerPage, page * itemsPerPage),
       products,
       projects

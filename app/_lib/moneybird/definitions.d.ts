@@ -32,3 +32,23 @@ export type Project = {
   name: string;
   state: "active" | "archived";
 };
+
+export type Invoice = {
+  id: string;
+  invoice_id: string;
+  invoice_date: string;
+  created_at: string;
+  updated_at: string;
+  sent_at: string;
+  paid_at: string | null;
+  administration_id: string;
+  contact_id: string;
+  contact: Contact;
+  details: {
+    id: string;
+    project_id: string;
+    amount: string;
+    product_id: string;
+    description: string;
+  }[];
+};

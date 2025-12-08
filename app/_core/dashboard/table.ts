@@ -9,9 +9,9 @@ import { formatTime, projectsToMap } from "@/app/_lib/utils";
 import { ProjectProductMap, Row } from "@/app/_lib/definitions";
 import { Project } from "@prisma/client";
 
-export const fetchTimeEntries = async (
+export async function fetchTimeEntries(
   filter = "state:open,period:this_month"
-) => {
+): Promise<TimeEntry[]> {
   const perPage = 100;
   try {
     // Load 200 entries at a time
@@ -54,9 +54,9 @@ export const fetchTimeEntries = async (
     console.error(error);
     return [];
   }
-};
+}
 
-export const fetchProducts = async () => {
+export async function fetchProducts(): Promise<Product[]> {
   try {
     const productsPromise = await fetchData("products");
     const products: Product[] = await productsPromise.json();
@@ -65,9 +65,9 @@ export const fetchProducts = async () => {
     console.error(error);
     return [];
   }
-};
+}
 
-export const getProjects = async () => {
+export async function getProjects(): Promise<Project[]> {
   const session = await getSession();
   if (session) {
     const user = session.user;
@@ -79,20 +79,20 @@ export const getProjects = async () => {
   }
 
   return [];
-};
+}
 
-export const getTotalPages = (
+export async function getTotalPages(
   itemsPerPage: number,
   timeEntries: TimeEntry[]
-) => {
+): Promise<number> {
   return Math.ceil(timeEntries.length / itemsPerPage);
-};
+}
 
-export const createRows = (
+export async function createRows(
   timeEntries: TimeEntry[],
   products: Product[],
   projects: Project[]
-): [Row[], number, number] => {
+): Promise<[Row[], number, number]> {
   let totalAmount = 0;
   let totalTime = 0;
   const projectProductMap: ProjectProductMap = projectsToMap(projects);
@@ -137,13 +137,13 @@ export const createRows = (
   );
 
   return [rows, totalAmount, totalTime];
-};
+}
 
-export const getTotalAmount = (
+export async function getTotalAmount(
   timeEntries: TimeEntry[],
   products: Product[],
   projects: Project[]
-) => {
+): Promise<number> {
   const projectProductMap: ProjectProductMap = projectsToMap(projects);
 
   return timeEntries.reduce((accumulator, currentTimeEntry) => {
@@ -162,13 +162,13 @@ export const getTotalAmount = (
     }
     return accumulator + amount;
   }, 0);
-};
+}
 
-export const getTotals = (
+export async function getTotals(
   timeEntries: TimeEntry[],
   products: Product[],
   projects: Project[]
-) => {
+): Promise<[number, number]> {
   const projectProductMap: ProjectProductMap = projectsToMap(projects);
 
   return timeEntries.reduce(
@@ -190,4 +190,4 @@ export const getTotals = (
     },
     [0, 0]
   );
-};
+}
