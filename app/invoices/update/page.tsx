@@ -5,6 +5,12 @@ import UpdateInvoiceForm from "./_components/updateInvoiceForm";
 import { TimeEntry } from "@/app/_lib/moneybird/definitions";
 import { getSession } from "@/app/_lib/session";
 
+// Helper validation function for invoiceId
+function isValidInvoiceId(invoiceId: string): boolean {
+  // Only allow alphanumerics and dashes (modify pattern to match expected ID format)
+  return /^[a-zA-Z0-9-]+$/.test(invoiceId);
+}
+
 export default async function CreateInvoicePage({}: {}) {
   const invoicesPromise = await fetchData(
     `sales_invoices?filter=period:this_year`
@@ -14,6 +20,10 @@ export default async function CreateInvoicePage({}: {}) {
 
   const onGetInvoice = async (invoiceId: string) => {
     "use server";
+
+    if (!isValidInvoiceId(invoiceId)) {
+      throw new Error("Invalid invoice ID.");
+    }
 
     const res = await fetchData(`sales_invoices/${invoiceId}`, "GET");
     const invoice = await res.json();
@@ -34,6 +44,10 @@ export default async function CreateInvoicePage({}: {}) {
 
   const onUpdateInvoice = async (invoiceId: string, body: {}) => {
     "use server";
+
+    if (!isValidInvoiceId(invoiceId)) {
+      throw new Error("Invalid invoice ID.");
+    }
 
     const res = await fetchData(`sales_invoices/${invoiceId}`, "PATCH", body);
     const invoice = await res.json();
